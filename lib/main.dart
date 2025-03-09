@@ -14,19 +14,19 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Logoscreen(),
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Color.fromRGBO(7, 63, 85, 1.0),
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Angelo', color: Colors.white),
+        scaffoldBackgroundColor: const Color.fromRGBO(7, 63, 85, 1.0),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontFamily: 'Poppins', color: Colors.white),
         ),
       ),
-      debugShowCheckedModeBanner: false,
+      initialRoute: '/logoscreen', // Fix: Ensures correct first screen
       routes: {
-        '/logoscreen': (context) => Logoscreen(),
-        '/login': (context) => Login(),
-        '/home': (context) => Home(),
-        '/registration': (context) => Registration(),
+        '/logoscreen': (context) => const Logoscreen(),
+        '/login': (context) => const Login(),
+        '/home': (context) => const Home(),
+        '/registration': (context) => const Registration(),
       },
     );
   }

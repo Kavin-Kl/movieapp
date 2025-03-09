@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:go_router/go_router.dart';
 
 class Logoscreen extends StatefulWidget {
   const Logoscreen({super.key});
@@ -14,7 +15,7 @@ class _LogoscreenState extends State<Logoscreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        GoRouter.of(context).go('/login');
       }
     });
   }
@@ -27,19 +28,23 @@ class _LogoscreenState extends State<Logoscreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedTextKit(
-                animatedTexts: [
-                  TypewriterAnimatedText(
-                    'ARTBOXED',
-                    textStyle: const TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Angelos',
-                    ),
-                    speed: const Duration(milliseconds: 150),
+              Hero(
+                tag: "logo",
+                child: Center(
+                  child: AnimatedTextKit(
+                    animatedTexts: [
+                      TypewriterAnimatedText(
+                        'ARTBOXED',
+                        textStyle: const TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Lucy',
+                        ),
+                      ),
+                    ],
+                    totalRepeatCount: 1,
                   ),
-                ],
-                totalRepeatCount: 1,
+                ),
               ),
               const SizedBox(height: 20),
               ClipRRect(
