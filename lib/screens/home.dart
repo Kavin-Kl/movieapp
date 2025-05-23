@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:movieeee/models/movie.dart';
+import 'package:movieeee/screens/detail.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,6 +13,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List movies = [];
+  List filteredMovies = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,47 +31,103 @@ class _HomeState extends State<Home> {
     if (response.statusCode == 200) {
       setState(() {
         movies = jsonDecode(response.body)['results'];
+        filteredMovies = movies;
       });
     } else {
       print("Failed to load movies: ${response.statusCode}");
     }
   }
 
+  void _searchMovies(String query) {
+    setState(() {
+      filteredMovies = movies
+          .where((movie) => movie['title']
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: movies.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.7,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _searchMovies,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Search movies...',
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  itemCount: movies.length,
-                  itemBuilder: (context, index) {
-                    var movie = movies[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DetailScreen(movieId: movie['id']),
-                          ),
-                        );
-                      },
-                      child: MovieCard(movie),
-                    );
-                  },
+                  filled: true,
+                  fillColor: Colors.grey[800],
                 ),
               ),
+            ),
+            Expanded(
+              child: movies.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.7,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: filteredMovies.length,
+                        itemBuilder: (context, index) {
+                          var movie = filteredMovies[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailScreen(
+                                    movie: Movie(
+                                      id: movie['id'],
+                                      title: movie['title'],
+                                      imageUrl: movie['poster_path'],
+                                      overview: movie['overview'],
+                                      genres: List<String>.from(
+                                          movie['genre_ids']
+                                              .map((id) => id.toString())),
+                                      rating: movie['vote_average'].toDouble(),
+                                      releaseYear:
+                                          DateTime.parse(movie['release_date'])
+                                              .year,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MovieCard(movie),
+                          );
+                        },
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }
 
@@ -108,20 +168,6 @@ class MovieCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class DetailScreen extends StatelessWidget {
-  final int movieId;
-  const DetailScreen({super.key, required this.movieId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text("Details for movie ID: $movieId"),
       ),
     );
   }

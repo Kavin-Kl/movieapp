@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:go_router/go_router.dart';
 
 class Logoscreen extends StatefulWidget {
   const Logoscreen({super.key});
@@ -15,7 +14,7 @@ class _LogoscreenState extends State<Logoscreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        GoRouter.of(context).go('/login');
+        Navigator.pushReplacementNamed(context, '/login');
       }
     });
   }

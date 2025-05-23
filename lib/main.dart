@@ -3,6 +3,7 @@ import 'package:movieeee/screens/login.dart';
 import 'package:movieeee/screens/home.dart';
 import 'package:movieeee/screens/registration.dart';
 import 'package:movieeee/screens/logoscreen.dart';
+import 'package:movieeee/screens/detail.dart' as detail;
 
 void main() {
   runApp(const MainApp());
@@ -21,7 +22,7 @@ class MainApp extends StatelessWidget {
           bodyMedium: TextStyle(fontFamily: 'Poppins', color: Colors.white),
         ),
       ),
-      initialRoute: '/logoscreen', // Fix: Ensures correct first screen
+      initialRoute: '/logoscreen',
       routes: {
         '/logoscreen': (context) => const Logoscreen(),
         '/login': (context) => const Login(),
